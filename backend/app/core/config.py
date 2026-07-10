@@ -1,5 +1,7 @@
 from functools import lru_cache
+from typing import Literal
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -9,20 +11,31 @@ class Settings(BaseSettings):
     app_name: str = "Real-Time Service Request Management System"
     app_environment: str = "development"
     app_host: str = "127.0.0.1"
-    app_port: int = 8000
+    app_port: int = Field(default=8000, ge=1, le=65535)
     frontend_origin: str = "http://localhost:5173"
 
-    database_url: str = (
-        "postgresql+asyncpg://service_request_app:change-me@"
-        "127.0.0.1:5432/service_request_db"
+    database_url: str = Field(
+        min_length=1,
+        description="Async SQLAlchemy PostgreSQL connection URL.",
     )
 
-    jwt_secret_key: str = "replace-this-development-secret"
-    jwt_algorithm: str = "HS256"
-    access_token_expire_minutes: int = 1440
+    jwt_secret_key: str = Field(min_length=32)
+    jwt_algorithm: Literal["HS256"] = "HS256"
 
-    pending_processing_delay_seconds: int = 5
-    completion_processing_delay_seconds: int = 10
+    access_token_expire_minutes: int = Field(
+        default=1440,
+        gt=0,
+    )
+
+    pending_processing_delay_seconds: int = Field(
+        default=5,
+        ge=0,
+    )
+
+    completion_processing_delay_seconds: int = Field(
+        default=10,
+        ge=0,
+    )
 
     model_config = SettingsConfigDict(
         env_file=".env",
