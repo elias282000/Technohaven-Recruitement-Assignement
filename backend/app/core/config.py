@@ -12,12 +12,15 @@ class Settings(BaseSettings):
     app_port: int = 8000
     frontend_origin: str = "http://localhost:5173"
 
-    # Used in later implementation steps. Kept here now so configuration has
-    # one stable home from the beginning of the project.
-    database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/service_request_db"
+    database_url: str = (
+        "postgresql+asyncpg://service_request_app:change-me@"
+        "127.0.0.1:5432/service_request_db"
+    )
+
     jwt_secret_key: str = "replace-this-development-secret"
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 1440
+
     pending_processing_delay_seconds: int = 5
     completion_processing_delay_seconds: int = 10
 
