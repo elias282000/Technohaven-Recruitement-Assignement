@@ -1,3 +1,4 @@
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -7,20 +8,40 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.auth import router as auth_router
 from app.api.requests import router as request_router
 from app.core.config import get_settings
+from app.core.startup_recovery import recover_active_requests
+from app.core.task_manager import task_manager
 from app.db.database import close_database
 
+logging.basicConfig(
+    level=logging.INFO,
+    format=(
+        "%(asctime)s | %(levelname)s | "
+        "%(name)s | %(message)s"
+    ),
+)
+
 settings = get_settings()
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    recovered_count = await recover_active_requests()
+
+    logger.info(
+        "Application startup recovered %s request task(s).",
+        recovered_count,
+    )
+
     yield
+
+    await task_manager.cancel_all()
     await close_database()
 
 
 app = FastAPI(
     title=settings.app_name,
-    version="0.4.0",
+    version="0.5.0",
     description=(
         "Backend API for the real-time service request "
         "management system."

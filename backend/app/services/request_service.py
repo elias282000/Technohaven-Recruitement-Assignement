@@ -19,6 +19,8 @@ from app.db.models import (
 )
 from app.schemas.requests import RequestCreate
 
+from app.core.task_manager import task_manager
+
 
 VALID_STATUS_TRANSITIONS: dict[
     RequestStatus,
@@ -158,7 +160,7 @@ async def create_request(
     payload: RequestCreate,
     current_user: User,
 ) -> ServiceRequest:
-    """Create and persist a pending service request."""
+    """Create a pending request and schedule its processing task."""
 
     service_request = ServiceRequest(
         title=payload.title,
@@ -188,8 +190,11 @@ async def create_request(
     )
 
     result = await session.execute(statement)
+    persisted_request = result.scalar_one()
 
-    return result.scalar_one()
+    task_manager.schedule(persisted_request.id)
+
+    return persisted_request
 
 
 async def list_requests(
