@@ -1,3 +1,5 @@
+import { Link } from 'react-router'
+
 import { useAuth } from '../hooks/useAuth'
 
 function roleLabel(
@@ -28,11 +30,32 @@ export function DashboardPage() {
           </h1>
 
           <p className="mt-4 max-w-2xl text-sm leading-7 text-emerald-50 sm:text-base">
-            Your authentication session is active. Request
-            creation, management, history, search, and
-            filtering will be added in the next
-            implementation step.
+            Create, monitor, search, progress,
+            and review service requests through
+            the request management workspace.
           </p>
+
+          <Link
+            to="/requests"
+            className="mt-7 inline-flex items-center gap-2 rounded-xl border border-white bg-white px-5 py-3 text-sm font-bold !text-emerald-700 shadow-lg transition hover:bg-emerald-50 hover:!text-emerald-800 focus:outline-none focus:ring-4 focus:ring-white/30"
+          >
+            <span>Open requests</span>
+
+            <svg
+              viewBox="0 0 24 24"
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m9 5 7 7-7 7"
+              />
+            </svg>
+          </Link>
         </div>
       </section>
 
@@ -60,8 +83,8 @@ export function DashboardPage() {
           </h2>
 
           <p className="mt-2 text-sm leading-6 text-slate-500">
-            Your JWT was validated against the backend and
-            the current user record was loaded.
+            Your JWT has been validated and
+            your current user record is active.
           </p>
         </article>
 
@@ -109,18 +132,18 @@ export function DashboardPage() {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M12 7.5v5l3 1.75M20 12a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"
+                d="M6 5.5h12v13H6v-13Zm3 3h6m-6 3h6m-6 3h4"
               />
             </svg>
           </div>
 
           <h2 className="mt-5 text-base font-bold text-slate-900">
-            Request workspace
+            Request management
           </h2>
 
           <p className="mt-2 text-sm leading-6 text-slate-500">
-            The complete REST request workflow will be
-            connected during Step 8.
+            The complete REST request workflow
+            is available from the Requests page.
           </p>
         </article>
       </section>

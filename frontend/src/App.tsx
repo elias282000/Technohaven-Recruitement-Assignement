@@ -10,6 +10,7 @@ import { AppLayout } from './components/layout/AppLayout'
 import { DashboardPage } from './pages/DashboardPage'
 import { LoginPage } from './pages/LoginPage'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { RequestsPage } from './pages/RequestsPage'
 
 export default function App() {
   return (
@@ -26,6 +27,11 @@ export default function App() {
           <Route
             path="/dashboard"
             element={<DashboardPage />}
+          />
+
+          <Route
+            path="/requests"
+            element={<RequestsPage />}
           />
         </Route>
       </Route>
