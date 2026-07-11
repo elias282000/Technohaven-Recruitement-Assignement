@@ -7,9 +7,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.auth import router as auth_router
 from app.api.requests import router as request_router
+from app.api.websocket import router as websocket_router
 from app.core.config import get_settings
 from app.core.startup_recovery import recover_active_requests
 from app.core.task_manager import task_manager
+from app.core.websocket_manager import websocket_manager
 from app.db.database import close_database
 
 logging.basicConfig(
@@ -35,13 +37,14 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
     yield
 
+    await websocket_manager.close_all()
     await task_manager.cancel_all()
     await close_database()
 
 
 app = FastAPI(
     title=settings.app_name,
-    version="0.5.0",
+    version="0.6.0",
     description=(
         "Backend API for the real-time service request "
         "management system."
@@ -59,6 +62,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(request_router)
+app.include_router(websocket_router)
 
 
 @app.get("/", tags=["System"])

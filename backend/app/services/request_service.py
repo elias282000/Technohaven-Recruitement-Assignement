@@ -21,6 +21,12 @@ from app.schemas.requests import RequestCreate
 
 from app.core.task_manager import task_manager
 
+from app.core.websocket_events import (
+    build_request_created_event,
+    build_request_updated_event,
+)
+from app.core.websocket_manager import websocket_manager
+
 
 VALID_STATUS_TRANSITIONS: dict[
     RequestStatus,
@@ -160,7 +166,11 @@ async def create_request(
     payload: RequestCreate,
     current_user: User,
 ) -> ServiceRequest:
-    """Create a pending request and schedule its processing task."""
+    """
+    Create, commit, schedule, and broadcast a pending request.
+
+    Scheduling and broadcasting occur only after persistence succeeds.
+    """
 
     service_request = ServiceRequest(
         title=payload.title,
@@ -193,6 +203,12 @@ async def create_request(
     persisted_request = result.scalar_one()
 
     task_manager.schedule(persisted_request.id)
+
+    await websocket_manager.broadcast(
+        build_request_created_event(
+            persisted_request
+        )
+    )
 
     return persisted_request
 
@@ -288,10 +304,10 @@ async def transition_request(
     enforce_authorization: bool = True,
 ) -> ServiceRequest:
     """
-    Apply one validated transition and history insertion atomically.
+    Persist one validated transition, then broadcast it.
 
-    The row lock ensures that concurrent transition attempts are
-    validated against the latest committed request state.
+    The request update and history insertion commit atomically.
+    The WebSocket event is emitted only after that commit succeeds.
     """
 
     try:
@@ -332,19 +348,20 @@ async def transition_request(
         service_request.status = requested_status
         service_request.updated_at = func.now()
 
-        history_entry = RequestStatusHistory(
-            request_id=service_request.id,
-            old_status=old_status,
-            new_status=requested_status,
+        session.add(
+            RequestStatusHistory(
+                request_id=service_request.id,
+                old_status=old_status,
+                new_status=requested_status,
+            )
         )
-
-        session.add(history_entry)
 
         await session.commit()
 
     except RequestServiceError:
         await session.rollback()
         raise
+
     except Exception:
         await session.rollback()
         raise
@@ -362,8 +379,15 @@ async def transition_request(
     refreshed_result = await session.execute(
         refreshed_statement
     )
+    persisted_request = refreshed_result.scalar_one()
 
-    return refreshed_result.scalar_one()
+    await websocket_manager.broadcast(
+        build_request_updated_event(
+            persisted_request
+        )
+    )
+
+    return persisted_request
 
 
 async def manually_update_request_status(
