@@ -1,0 +1,927 @@
+GET http://127.0.0.1:8000/health: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "5378fbd7-cc32-47fd-a0eb-cd865a6e1976",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:47 GMT",
+    "server": "uvicorn",
+    "content-length": "20",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"status\":\"healthy\"}"
+}
+POST http://127.0.0.1:8000/auth/login: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "a4f07c86-ca8b-4446-9b01-bad158b2bb20",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "63"
+  },
+  "Request Body": "{\n  \"email\": \"operator@example.com\",\n  \"password\": \"asdf#101\"\n}",
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:47 GMT",
+    "server": "uvicorn",
+    "content-length": "247",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"access_token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo\",\"token_type\":\"bearer\",\"expires_in\":86400}"
+}
+GET http://127.0.0.1:8000/auth/me: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "ee8e3abc-3b41-4f02-b9e1-8c92de13a0d7",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:47 GMT",
+    "server": "uvicorn",
+    "content-length": "100",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"id\":1,\"email\":\"operator@example.com\",\"role\":\"operator\",\"created_at\":\"2026-07-10T13:43:37.717899Z\"}"
+}
+POST http://127.0.0.1:8000/auth/login: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "5be3fabd-e2aa-415a-8400-0c2660db1404",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "65"
+  },
+  "Request Body": "{\n  \"email\": \"supervisor@example.com\",\n  \"password\": \"asdf#101\"\n}",
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:47 GMT",
+    "server": "uvicorn",
+    "content-length": "249",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"access_token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZSI6InN1cGVydmlzb3IiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzgzNzg2OTY4LCJleHAiOjE3ODM4NzMzNjh9.OS2aZpcO9FJFbiIPkOFCDAmtK6a2lc7emE4eVw8oy5E\",\"token_type\":\"bearer\",\"expires_in\":86400}"
+}
+GET http://127.0.0.1:8000/auth/me: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZSI6InN1cGVydmlzb3IiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzgzNzg2OTY4LCJleHAiOjE3ODM4NzMzNjh9.OS2aZpcO9FJFbiIPkOFCDAmtK6a2lc7emE4eVw8oy5E",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "f7ba3aea-5889-480e-b745-c446c534c229",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:47 GMT",
+    "server": "uvicorn",
+    "content-length": "104",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"id\":2,\"email\":\"supervisor@example.com\",\"role\":\"supervisor\",\"created_at\":\"2026-07-10T13:43:37.717899Z\"}"
+}
+POST http://127.0.0.1:8000/auth/login: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "ec8cfaac-514f-444d-aa8f-b71a50e312e1",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "69"
+  },
+  "Request Body": "{\n  \"email\": \"operator@example.com\",\n  \"password\": \"wrong-password\"\n}",
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:47 GMT",
+    "server": "uvicorn",
+    "www-authenticate": "Bearer",
+    "content-length": "39",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"detail\":\"Invalid email or password.\"}"
+}
+GET http://127.0.0.1:8000/requests: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "eed94b28-5ac4-4cee-b2ce-026082f19eeb",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:47 GMT",
+    "server": "uvicorn",
+    "www-authenticate": "Bearer",
+    "content-length": "59",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"detail\":\"Could not validate authentication credentials.\"}"
+}
+GET http://127.0.0.1:8000/requests: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer invalid-token",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "87b5354b-64c8-40d1-9260-678ae0d42242",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:47 GMT",
+    "server": "uvicorn",
+    "www-authenticate": "Bearer",
+    "content-length": "59",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"detail\":\"Could not validate authentication credentials.\"}"
+}
+POST http://127.0.0.1:8000/requests: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "ea520346-d924-4acd-884a-e2ca0d5ad207",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "193"
+  },
+  "Request Body": "{\n  \"title\": \"Phase 4 operator-owned request\",\n  \"description\": \"Formal Postman acceptance request created by the Operator account.\",\n  \"requester_name\": \"Ayesha Rahman\",\n  \"priority\": \"high\"\n}",
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:47 GMT",
+    "server": "uvicorn",
+    "content-length": "354",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"id\":41,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"pending\",\"created_by\":1,\"created_at\":\"2026-07-11T16:22:48.433778Z\",\"updated_at\":\"2026-07-11T16:22:48.433778Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}}"
+}
+POST http://127.0.0.1:8000/requests: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZSI6InN1cGVydmlzb3IiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzgzNzg2OTY4LCJleHAiOjE3ODM4NzMzNjh9.OS2aZpcO9FJFbiIPkOFCDAmtK6a2lc7emE4eVw8oy5E",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "2cd2fd5f-f564-43c4-bffe-43ce4f450bbe",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "198"
+  },
+  "Request Body": "{\n  \"title\": \"Phase 4 supervisor-owned request\",\n  \"description\": \"Formal Postman acceptance request created by the Supervisor account.\",\n  \"requester_name\": \"Farhan Karim\",\n  \"priority\": \"medium\"\n}",
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:47 GMT",
+    "server": "uvicorn",
+    "content-length": "361",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"id\":42,\"title\":\"Phase 4 supervisor-owned request\",\"description\":\"Formal Postman acceptance request created by the Supervisor account.\",\"requester_name\":\"Farhan Karim\",\"priority\":\"medium\",\"status\":\"pending\",\"created_by\":2,\"created_at\":\"2026-07-11T16:22:48.492395Z\",\"updated_at\":\"2026-07-11T16:22:48.492395Z\",\"creator\":{\"id\":2,\"email\":\"supervisor@example.com\"}}"
+}
+GET http://127.0.0.1:8000/requests: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "ed36aec2-8746-44c8-93cb-30f678f73f1c",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:47 GMT",
+    "server": "uvicorn",
+    "content-length": "14042",
+    "content-type": "application/json"
+  },
+  "Response Body": "The console only shows response bodies smaller than 10 KB inline. To view the complete body, inspect it by clicking Open."
+}
+GET http://127.0.0.1:8000/requests/41: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "74f8458d-e37c-45b2-8378-dd6a8eeade27",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:47 GMT",
+    "server": "uvicorn",
+    "content-length": "354",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"id\":41,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"pending\",\"created_by\":1,\"created_at\":\"2026-07-11T16:22:48.433778Z\",\"updated_at\":\"2026-07-11T16:22:48.433778Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}}"
+}
+GET http://127.0.0.1:8000/requests/41/history: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "aaf7f71e-7b96-43cc-b44f-02807cf6b2b3",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "2",
+    "content-type": "application/json"
+  },
+  "Response Body": "[]"
+}
+POST http://127.0.0.1:8000/requests: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "80870f94-77ea-468a-a9ad-d21225a9abbe",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "153"
+  },
+  "Request Body": "{\n  \"title\": \"   \",\n  \"description\": \"This description is long enough for validation.\",\n  \"requester_name\": \"Validation Tester\",\n  \"priority\": \"medium\"\n}",
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "137",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"detail\":[{\"type\":\"value_error\",\"loc\":[\"body\",\"title\"],\"msg\":\"Value error, Title must not be blank.\",\"input\":\"   \",\"ctx\":{\"error\":{}}}]}"
+}
+POST http://127.0.0.1:8000/requests: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "364afc4f-d06a-4276-904d-adb2b4d3e958",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "189"
+  },
+  "Request Body": "{\n  \"title\": \"Invalid priority request\",\n  \"description\": \"This request must be rejected because the priority is invalid.\",\n  \"requester_name\": \"Validation Tester\",\n  \"priority\": \"urgent\"\n}",
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "168",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"detail\":[{\"type\":\"enum\",\"loc\":[\"body\",\"priority\"],\"msg\":\"Input should be 'low', 'medium' or 'high'\",\"input\":\"urgent\",\"ctx\":{\"expected\":\"'low', 'medium' or 'high'\"}}]}"
+}
+POST http://127.0.0.1:8000/requests: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "ebe66f27-31e3-40f2-9b3f-cfb9d87fce25",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "145"
+  },
+  "Request Body": "{\n  \"title\": \"Missing requester test\",\n  \"description\": \"This request must be rejected because requester_name is missing.\",\n  \"priority\": \"low\"\n}",
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "227",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"requester_name\"],\"msg\":\"Field required\",\"input\":{\"title\":\"Missing requester test\",\"description\":\"This request must be rejected because requester_name is missing.\",\"priority\":\"low\"}}]}"
+}
+PATCH http://127.0.0.1:8000/requests/41/status: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "bdf4d396-bf72-4d47-b4ef-786028d7faf1",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "25"
+  },
+  "Request Body": "{\n  \"status\": \"working\"\n}",
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "221",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"detail\":[{\"type\":\"enum\",\"loc\":[\"body\",\"status\"],\"msg\":\"Input should be 'pending', 'in_progress', 'completed' or 'cancelled'\",\"input\":\"working\",\"ctx\":{\"expected\":\"'pending', 'in_progress', 'completed' or 'cancelled'\"}}]}"
+}
+GET http://127.0.0.1:8000/requests?q=Ayesha%20Rahman: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "352da14b-6edf-4721-b6c8-32260640ca46",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "3797",
+    "content-type": "application/json"
+  },
+  "Response Body": "[{\"id\":41,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"pending\",\"created_by\":1,\"created_at\":\"2026-07-11T16:22:48.433778Z\",\"updated_at\":\"2026-07-11T16:22:48.433778Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":38,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T16:16:45.072816Z\",\"updated_at\":\"2026-07-11T16:17:40.130301Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":28,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T15:06:18.593286Z\",\"updated_at\":\"2026-07-11T15:07:13.648073Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":27,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T15:01:46.580107Z\",\"updated_at\":\"2026-07-11T15:02:41.660225Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":19,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T14:36:36.166770Z\",\"updated_at\":\"2026-07-11T14:37:52.099697Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":17,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T14:31:10.028052Z\",\"updated_at\":\"2026-07-11T14:34:28.542938Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":9,\"title\":\"WebSocket creation test\",\"description\":\"This request verifies real-time creation events.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"medium\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T02:13:33.684882Z\",\"updated_at\":\"2026-07-11T02:14:18.719598Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":8,\"title\":\"WebSocket creation test\",\"description\":\"This request verifies real-time creation events.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"medium\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T02:07:27.531664Z\",\"updated_at\":\"2026-07-11T02:08:12.586399Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":6,\"title\":\"Automatic progression test\",\"description\":\"This request will verify automatic processing.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"medium\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-10T18:43:03.930941Z\",\"updated_at\":\"2026-07-10T18:43:48.970340Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":3,\"title\":\"Automatic progression test\",\"description\":\"This request will verify automatic processing.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"medium\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-10T17:54:53.256876Z\",\"updated_at\":\"2026-07-10T17:55:08.306734Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":1,\"title\":\"Printer not working\",\"description\":\"The third-floor office printer is jammed.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"medium\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-10T14:50:23.575872Z\",\"updated_at\":\"2026-07-10T15:00:50.227498Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}}]"
+}
+GET http://127.0.0.1:8000/requests?status=pending: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "c4ccb716-dcf2-434a-b789-a99e9430349d",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "718",
+    "content-type": "application/json"
+  },
+  "Response Body": "[{\"id\":42,\"title\":\"Phase 4 supervisor-owned request\",\"description\":\"Formal Postman acceptance request created by the Supervisor account.\",\"requester_name\":\"Farhan Karim\",\"priority\":\"medium\",\"status\":\"pending\",\"created_by\":2,\"created_at\":\"2026-07-11T16:22:48.492395Z\",\"updated_at\":\"2026-07-11T16:22:48.492395Z\",\"creator\":{\"id\":2,\"email\":\"supervisor@example.com\"}},{\"id\":41,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"pending\",\"created_by\":1,\"created_at\":\"2026-07-11T16:22:48.433778Z\",\"updated_at\":\"2026-07-11T16:22:48.433778Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}}]"
+}
+GET http://127.0.0.1:8000/requests?priority=high: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "0ece6ba7-3682-4dda-a9b9-a907eb4c0e9b",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "3941",
+    "content-type": "application/json"
+  },
+  "Response Body": "[{\"id\":41,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"pending\",\"created_by\":1,\"created_at\":\"2026-07-11T16:22:48.433778Z\",\"updated_at\":\"2026-07-11T16:22:48.433778Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":38,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T16:16:45.072816Z\",\"updated_at\":\"2026-07-11T16:17:40.130301Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":28,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T15:06:18.593286Z\",\"updated_at\":\"2026-07-11T15:07:13.648073Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":27,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T15:01:46.580107Z\",\"updated_at\":\"2026-07-11T15:02:41.660225Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":19,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T14:36:36.166770Z\",\"updated_at\":\"2026-07-11T14:37:52.099697Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":17,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T14:31:10.028052Z\",\"updated_at\":\"2026-07-11T14:34:28.542938Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":16,\"title\":\"dfgraserg\",\"description\":\"wae b4tsert\",\"requester_name\":\"awererwr\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T11:21:07.797404Z\",\"updated_at\":\"2026-07-11T11:21:52.831298Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":14,\"title\":\"Hello\",\"description\":\"oihjoioinef\",\"requester_name\":\"oijkn\",\"priority\":\"high\",\"status\":\"cancelled\",\"created_by\":1,\"created_at\":\"2026-07-11T07:28:57.312322Z\",\"updated_at\":\"2026-07-11T07:29:04.450368Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":12,\"title\":\"oiuhn\",\"description\":\"huhiuhjknjkn\",\"requester_name\":\"oihub\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-11T07:19:49.267826Z\",\"updated_at\":\"2026-07-11T07:20:21.375724Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":7,\"title\":\"Cancel while pending\",\"description\":\"This request will be cancelled before processing.\",\"requester_name\":\"Nusrat Jahan\",\"priority\":\"high\",\"status\":\"cancelled\",\"created_by\":1,\"created_at\":\"2026-07-10T18:54:57.511338Z\",\"updated_at\":\"2026-07-10T18:55:06.762413Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":5,\"title\":\"Cancel while pending\",\"description\":\"This request will be cancelled before processing.\",\"requester_name\":\"Nusrat Jahan\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":1,\"created_at\":\"2026-07-10T18:01:21.322171Z\",\"updated_at\":\"2026-07-10T18:01:36.347756Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}},{\"id\":2,\"title\":\"Network connectivity problem\",\"description\":\"The meeting room network is unavailable.\",\"requester_name\":\"Karim Hassan\",\"priority\":\"high\",\"status\":\"completed\",\"created_by\":2,\"created_at\":\"2026-07-10T15:06:03.285819Z\",\"updated_at\":\"2026-07-10T15:49:11.847066Z\",\"creator\":{\"id\":2,\"email\":\"supervisor@example.com\"}}]"
+}
+GET http://127.0.0.1:8000/requests?q=Ayesha&status=pending&priority=high: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "d6974b72-5b18-4a01-b4ec-ce1dabf8bc97",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "356",
+    "content-type": "application/json"
+  },
+  "Response Body": "[{\"id\":41,\"title\":\"Phase 4 operator-owned request\",\"description\":\"Formal Postman acceptance request created by the Operator account.\",\"requester_name\":\"Ayesha Rahman\",\"priority\":\"high\",\"status\":\"pending\",\"created_by\":1,\"created_at\":\"2026-07-11T16:22:48.433778Z\",\"updated_at\":\"2026-07-11T16:22:48.433778Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}}]"
+}
+POST http://127.0.0.1:8000/requests: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "d8d2a178-d001-421c-8991-7e807c9d2ffa",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "200"
+  },
+  "Request Body": "{\n  \"title\": \"Phase 4 cancellation request\",\n  \"description\": \"This request exists specifically to verify soft cancellation behavior.\",\n  \"requester_name\": \"Cancellation Tester\",\n  \"priority\": \"low\"\n}",
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "361",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"id\":43,\"title\":\"Phase 4 cancellation request\",\"description\":\"This request exists specifically to verify soft cancellation behavior.\",\"requester_name\":\"Cancellation Tester\",\"priority\":\"low\",\"status\":\"pending\",\"created_by\":1,\"created_at\":\"2026-07-11T16:22:48.807740Z\",\"updated_at\":\"2026-07-11T16:22:48.807740Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}}"
+}
+DELETE http://127.0.0.1:8000/requests/43: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "9cf2d9b7-8f18-4d93-a0dd-4a7e1e2c11c1",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "363",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"id\":43,\"title\":\"Phase 4 cancellation request\",\"description\":\"This request exists specifically to verify soft cancellation behavior.\",\"requester_name\":\"Cancellation Tester\",\"priority\":\"low\",\"status\":\"cancelled\",\"created_by\":1,\"created_at\":\"2026-07-11T16:22:48.807740Z\",\"updated_at\":\"2026-07-11T16:22:48.838412Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}}"
+}
+GET http://127.0.0.1:8000/requests/43: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "7de4aa2e-90f0-4f25-a45f-ccb500f8665a",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "363",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"id\":43,\"title\":\"Phase 4 cancellation request\",\"description\":\"This request exists specifically to verify soft cancellation behavior.\",\"requester_name\":\"Cancellation Tester\",\"priority\":\"low\",\"status\":\"cancelled\",\"created_by\":1,\"created_at\":\"2026-07-11T16:22:48.807740Z\",\"updated_at\":\"2026-07-11T16:22:48.838412Z\",\"creator\":{\"id\":1,\"email\":\"operator@example.com\"}}"
+}
+PATCH http://127.0.0.1:8000/requests/43/status: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZSI6InN1cGVydmlzb3IiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzgzNzg2OTY4LCJleHAiOjE3ODM4NzMzNjh9.OS2aZpcO9FJFbiIPkOFCDAmtK6a2lc7emE4eVw8oy5E",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "8aace418-1994-41e1-9ee6-c28779bd2ee1",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "27"
+  },
+  "Request Body": "{\n  \"status\": \"completed\"\n}",
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "64",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"detail\":\"Completed and cancelled requests cannot be changed.\"}"
+}
+DELETE http://127.0.0.1:8000/requests/42: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "a7665baa-77d4-4bc1-9c42-7bbfd606cc9d",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "61",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"detail\":\"Operators may modify only requests they created.\"}"
+}
+GET http://127.0.0.1:8000/requests/43/history: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZSI6InN1cGVydmlzb3IiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzgzNzg2OTY4LCJleHAiOjE3ODM4NzMzNjh9.OS2aZpcO9FJFbiIPkOFCDAmtK6a2lc7emE4eVw8oy5E",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "a5de2485-65e6-4d8e-85d6-14c066ad335e",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "118",
+    "content-type": "application/json"
+  },
+  "Response Body": "[{\"id\":73,\"request_id\":43,\"old_status\":\"pending\",\"new_status\":\"cancelled\",\"changed_at\":\"2026-07-11T16:22:48.838412Z\"}]"
+}
+GET http://127.0.0.1:8000/requests/999999999: {
+  "Network": {
+    "addresses": {
+      "local": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 50156
+      },
+      "remote": {
+        "address": "127.0.0.1",
+        "family": "IPv4",
+        "port": 8000
+      }
+    }
+  },
+  "Request Headers": {
+    "accept": "application/json",
+    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "user-agent": "PostmanRuntime/7.54.0",
+    "postman-token": "5fc2c5de-036b-4653-b844-e07ef17cab60",
+    "host": "127.0.0.1:8000",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive"
+  },
+  "Response Headers": {
+    "date": "Sat, 11 Jul 2026 16:22:48 GMT",
+    "server": "uvicorn",
+    "content-length": "39",
+    "content-type": "application/json"
+  },
+  "Response Body": "{\"detail\":\"Service request not found.\"}"
+}

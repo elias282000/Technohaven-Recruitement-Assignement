@@ -1,0 +1,7 @@
+Database: service_request_db
+Connected user: service_request_app
+Required tables:
+  - request_status_history
+  - service_requests
+  - users
+Database verification passed.
