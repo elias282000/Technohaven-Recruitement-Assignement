@@ -7,7 +7,6 @@ import {
   type ReactNode,
 } from 'react'
 
-import { ApiError } from '../lib/api'
 import {
   getAccessToken,
   removeAccessToken,
@@ -21,6 +20,10 @@ import type {
   AuthUser,
   LoginCredentials,
 } from '../types/auth'
+import {
+  AUTH_UNAUTHORIZED_EVENT,
+  ApiError,
+} from '../lib/api'
 
 interface AuthContextValue {
   user: AuthUser | null
@@ -52,6 +55,24 @@ export function AuthProvider({
     removeAccessToken()
     setUser(null)
   }, [])
+
+  useEffect(() => {
+    function handleUnauthorizedSession(): void {
+      logout()
+    }
+
+    window.addEventListener(
+      AUTH_UNAUTHORIZED_EVENT,
+      handleUnauthorizedSession,
+    )
+
+    return () => {
+      window.removeEventListener(
+        AUTH_UNAUTHORIZED_EVENT,
+        handleUnauthorizedSession,
+      )
+    }
+  }, [logout])
 
   useEffect(() => {
     let isActive = true

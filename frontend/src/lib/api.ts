@@ -9,10 +9,11 @@ if (!configuredApiBaseUrl) {
   )
 }
 
-export const API_BASE_URL = configuredApiBaseUrl.replace(
-  /\/+$/,
-  '',
-)
+export const API_BASE_URL =
+  configuredApiBaseUrl.replace(/\/+$/, '')
+
+export const AUTH_UNAUTHORIZED_EVENT =
+  'service-request-auth-unauthorized'
 
 interface ApiErrorBody {
   detail?: unknown
@@ -28,6 +29,7 @@ export class ApiError extends Error {
     body: unknown,
   ) {
     super(message)
+
     this.name = 'ApiError'
     this.status = status
     this.body = body
@@ -43,7 +45,8 @@ function extractErrorMessage(
     body !== null &&
     'detail' in body
   ) {
-    const detail = (body as ApiErrorBody).detail
+    const detail =
+      (body as ApiErrorBody).detail
 
     if (typeof detail === 'string') {
       return detail
@@ -83,7 +86,11 @@ async function parseResponseBody(
   const contentType =
     response.headers.get('content-type') ?? ''
 
-  if (contentType.includes('application/json')) {
+  if (
+    contentType.includes(
+      'application/json',
+    )
+  ) {
     return response.json()
   }
 
@@ -92,25 +99,41 @@ async function parseResponseBody(
   return text || null
 }
 
+function notifyUnauthorizedSession(): void {
+  window.dispatchEvent(
+    new Event(AUTH_UNAUTHORIZED_EVENT),
+  )
+}
+
 export async function apiRequest<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
   const token = getAccessToken()
+  const headers = new Headers(
+    options.headers,
+  )
 
-  const headers = new Headers(options.headers)
-
-  headers.set('Accept', 'application/json')
+  headers.set(
+    'Accept',
+    'application/json',
+  )
 
   if (
     options.body !== undefined &&
     !headers.has('Content-Type')
   ) {
-    headers.set('Content-Type', 'application/json')
+    headers.set(
+      'Content-Type',
+      'application/json',
+    )
   }
 
   if (token) {
-    headers.set('Authorization', `Bearer ${token}`)
+    headers.set(
+      'Authorization',
+      `Bearer ${token}`,
+    )
   }
 
   let response: Response
@@ -131,9 +154,17 @@ export async function apiRequest<T>(
     )
   }
 
-  const body = await parseResponseBody(response)
+  const body =
+    await parseResponseBody(response)
 
   if (!response.ok) {
+    if (
+      response.status === 401 &&
+      token !== null
+    ) {
+      notifyUnauthorizedSession()
+    }
+
     throw new ApiError(
       extractErrorMessage(
         body,

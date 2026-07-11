@@ -1,6 +1,19 @@
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { Link } from 'react-router'
 
 import { useAuth } from '../hooks/useAuth'
+import { useRealtime } from '../hooks/useRealtime'
+import { ApiError } from '../lib/api'
+import { getRequests } from '../services/requestService'
+import type {
+  ServiceRequest,
+} from '../types/request'
 
 function roleLabel(
   role: 'operator' | 'supervisor',
@@ -12,6 +25,126 @@ function roleLabel(
 
 export function DashboardPage() {
   const { user } = useAuth()
+  const { subscribe } = useRealtime()
+
+  const [requests, setRequests] =
+    useState<ServiceRequest[]>([])
+
+  const [isLoading, setIsLoading] =
+    useState(true)
+
+  const [error, setError] =
+    useState<string | null>(null)
+
+  const loadSequenceRef = useRef(0)
+
+  const loadSummary = useCallback(
+    async (
+      showLoadingState = true,
+    ): Promise<void> => {
+      const sequence =
+        loadSequenceRef.current + 1
+
+      loadSequenceRef.current = sequence
+
+      if (showLoadingState) {
+        setIsLoading(true)
+      }
+
+      try {
+        const loadedRequests =
+          await getRequests({
+            query: '',
+            status: '',
+            priority: '',
+          })
+
+        if (
+          sequence !==
+          loadSequenceRef.current
+        ) {
+          return
+        }
+
+        setRequests(loadedRequests)
+        setError(null)
+      } catch (requestError) {
+        if (
+          sequence !==
+          loadSequenceRef.current
+        ) {
+          return
+        }
+
+        if (
+          requestError instanceof ApiError
+        ) {
+          setError(requestError.message)
+        } else {
+          setError(
+            'Unable to load request summary.',
+          )
+        }
+      } finally {
+        if (
+          sequence ===
+            loadSequenceRef.current
+        ) {
+          setIsLoading(false)
+        }
+      }
+    },
+    [],
+  )
+
+  useEffect(() => {
+    void loadSummary(true)
+  }, [loadSummary])
+
+  useEffect(() => {
+    const unsubscribe = subscribe(
+      (realtimeEvent) => {
+        if (
+          realtimeEvent.type ===
+            'connection_established' ||
+          realtimeEvent.type ===
+            'request_created' ||
+          realtimeEvent.type ===
+            'request_updated'
+        ) {
+          void loadSummary(false)
+        }
+      },
+    )
+
+    return unsubscribe
+  }, [loadSummary, subscribe])
+
+  const summary = useMemo(
+    () => ({
+      total: requests.length,
+      pending: requests.filter(
+        (request) =>
+          request.status === 'pending',
+      ).length,
+      inProgress: requests.filter(
+        (request) =>
+          request.status ===
+          'in_progress',
+      ).length,
+      completed: requests.filter(
+        (request) =>
+          request.status ===
+          'completed',
+      ).length,
+      cancelled: requests.filter(
+        (request) =>
+          request.status ===
+          'cancelled',
+      ).length,
+    }),
+    [requests],
+  )
 
   if (!user) {
     return null
@@ -30,9 +163,8 @@ export function DashboardPage() {
           </h1>
 
           <p className="mt-4 max-w-2xl text-sm leading-7 text-emerald-50 sm:text-base">
-            Create, monitor, search, progress,
-            and review service requests through
-            the request management workspace.
+            Monitor the complete request lifecycle through
+            live counts synchronized with the backend.
           </p>
 
           <Link
@@ -59,54 +191,116 @@ export function DashboardPage() {
         </div>
       </section>
 
-      <section className="mt-6 grid gap-5 md:grid-cols-3">
-        <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-            <svg
-              viewBox="0 0 24 24"
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8 12.5 10.5 15 16 9.5M12 3.75 19.25 7v5c0 4.25-2.8 7.2-7.25 8.25C7.55 19.2 4.75 16.25 4.75 12V7L12 3.75Z"
-              />
-            </svg>
+      {error && (
+        <div
+          role="alert"
+          className="mt-6 flex flex-col gap-4 rounded-2xl border border-red-200 bg-red-50 p-5 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div>
+            <p className="text-sm font-bold text-red-800">
+              Summary unavailable
+            </p>
+
+            <p className="mt-1 text-sm text-red-700">
+              {error}
+            </p>
           </div>
 
-          <h2 className="mt-5 text-base font-bold text-slate-900">
+          <button
+            type="button"
+            onClick={() =>
+              void loadSummary(true)
+            }
+            className="w-fit rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white"
+          >
+            Try again
+          </button>
+        </div>
+      )}
+
+      <section
+        className="mt-6 grid grid-cols-2 gap-4 xl:grid-cols-5"
+        aria-label="Live request summary"
+        aria-busy={isLoading}
+      >
+        {isLoading ? (
+          Array.from({
+            length: 5,
+          }).map((_, index) => (
+            <div
+              key={index}
+              className="h-28 animate-pulse rounded-2xl border border-slate-200 bg-white"
+            />
+          ))
+        ) : (
+          <>
+            <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                Total
+              </p>
+
+              <p className="mt-3 text-3xl font-bold text-slate-950">
+                {summary.total}
+              </p>
+            </article>
+
+            <article className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-amber-600">
+                Pending
+              </p>
+
+              <p className="mt-3 text-3xl font-bold text-amber-800">
+                {summary.pending}
+              </p>
+            </article>
+
+            <article className="rounded-2xl border border-blue-200 bg-blue-50 p-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
+                In progress
+              </p>
+
+              <p className="mt-3 text-3xl font-bold text-blue-800">
+                {summary.inProgress}
+              </p>
+            </article>
+
+            <article className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">
+                Completed
+              </p>
+
+              <p className="mt-3 text-3xl font-bold text-emerald-800">
+                {summary.completed}
+              </p>
+            </article>
+
+            <article className="rounded-2xl border border-slate-300 bg-slate-100 p-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Cancelled
+              </p>
+
+              <p className="mt-3 text-3xl font-bold text-slate-700">
+                {summary.cancelled}
+              </p>
+            </article>
+          </>
+        )}
+      </section>
+
+      <section className="mt-6 grid gap-5 md:grid-cols-3">
+        <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-base font-bold text-slate-900">
             Authenticated
           </h2>
 
           <p className="mt-2 text-sm leading-6 text-slate-500">
-            Your JWT has been validated and
-            your current user record is active.
+            Your JWT has been validated and your account
+            remains active.
           </p>
         </article>
 
         <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
-            <svg
-              viewBox="0 0 24 24"
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6.5h16v11H4v-11Zm3 3h4m-4 3h10"
-              />
-            </svg>
-          </div>
-
-          <h2 className="mt-5 text-base font-bold text-slate-900">
+          <h2 className="text-base font-bold text-slate-900">
             Role assigned
           </h2>
 
@@ -120,30 +314,14 @@ export function DashboardPage() {
         </article>
 
         <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
-            <svg
-              viewBox="0 0 24 24"
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 5.5h12v13H6v-13Zm3 3h6m-6 3h6m-6 3h4"
-              />
-            </svg>
-          </div>
-
-          <h2 className="mt-5 text-base font-bold text-slate-900">
-            Request management
+          <h2 className="text-base font-bold text-slate-900">
+            Live synchronization
           </h2>
 
           <p className="mt-2 text-sm leading-6 text-slate-500">
-            The complete REST request workflow
-            is available from the Requests page.
+            Counts refresh automatically after request
+            creation, status transitions, cancellation,
+            and WebSocket reconnection.
           </p>
         </article>
       </section>

@@ -27,11 +27,16 @@ import type {
   ServiceRequest,
 } from '../types/request'
 
+import {
+  getRequestErrorPresentation,
+} from '../lib/requestErrorMessage'
+
 const emptyFilters: RequestFiltersValue = {
   query: '',
   status: '',
   priority: '',
 }
+
 
 function updateRequestInList(
   requests: ServiceRequest[],
@@ -60,6 +65,12 @@ export function RequestsPage() {
     useState<RequestFiltersValue>(
       emptyFilters,
     )
+
+  const [errorTitle, setErrorTitle] =
+    useState<string | null>(null)
+
+  const [shouldReloadAfterError, setShouldReloadAfterError] =
+    useState(false)
 
   const [appliedFilters, setAppliedFilters] =
     useState<RequestFiltersValue>(
@@ -99,6 +110,29 @@ export function RequestsPage() {
     setDetailsRefreshKey,
   ] = useState(0)
 
+  function showRequestError(
+    requestError: unknown,
+    fallbackMessage: string,
+  ): void {
+    const presentation =
+      getRequestErrorPresentation(
+        requestError,
+        fallbackMessage,
+      )
+
+    setErrorTitle(presentation.title)
+    setError(presentation.message)
+    setShouldReloadAfterError(
+      presentation.shouldReload,
+    )
+  }
+
+  function clearRequestError(): void {
+    setErrorTitle(null)
+    setError(null)
+    setShouldReloadAfterError(false)
+  }
+
   const loadRequests = useCallback(
     async (
         showLoadingState = true,
@@ -125,27 +159,26 @@ export function RequestsPage() {
         }
 
         setRequests(loadedRequests)
+        clearRequestError()
         setError(null)
         } catch (requestError) {
-        if (
-            requestSequence !==
-            requestLoadSequenceRef.current
-        ) {
-            return
-        }
+          showRequestError(
+            requestError,
+            'Unable to update the request status.',
+          )
 
-        if (
-            requestError instanceof ApiError
-        ) {
-            setError(requestError.message)
-        } else {
-            setError(
-            'Unable to load service requests.',
+          if (
+            requestError instanceof ApiError &&
+            (
+              requestError.status === 403 ||
+              requestError.status === 404 ||
+              requestError.status === 409
             )
-        }
+          ) {
+            await loadRequests(false)
+          }
         } finally {
         if (
-            showLoadingState &&
             requestSequence ===
             requestLoadSequenceRef.current
         ) {
@@ -162,35 +195,41 @@ export function RequestsPage() {
 
   useEffect(() => {
     const unsubscribe = subscribe(
-        (realtimeEvent) => {
-        if (
-            realtimeEvent.type !==
-            'request_created' &&
-            realtimeEvent.type !==
+      (realtimeEvent) => {
+        const requiresReconciliation =
+          realtimeEvent.type ===
+            'connection_established' ||
+          realtimeEvent.type ===
+            'request_created' ||
+          realtimeEvent.type ===
             'request_updated'
-        ) {
-            return
+
+        if (!requiresReconciliation) {
+          return
         }
 
         /*
-        * Reload from the REST API so active search,
-        * status, and priority filters remain exact.
+        * A connection-established event also reloads state.
+        * This reconciles changes missed while disconnected.
         */
         void loadRequests(false)
 
-        /*
-        * If the details modal is open, this causes
-        * it to reload the request and history.
-        */
-        setDetailsRefreshKey(
+        if (
+          realtimeEvent.type ===
+            'request_created' ||
+          realtimeEvent.type ===
+            'request_updated'
+        ) {
+          setDetailsRefreshKey(
             (currentKey) =>
-            currentKey + 1,
-        )
-        },
+              currentKey + 1,
+          )
+        }
+      },
     )
 
     return unsubscribe
-  }, [loadRequests, subscribe])
+}, [loadRequests, subscribe])
 
   const summary = useMemo(
     () => ({
@@ -286,14 +325,20 @@ export function RequestsPage() {
         await loadRequests(false)
       }
     } catch (requestError) {
+      showRequestError(
+        requestError,
+        'Unable to update the request status.',
+      )
+
       if (
-        requestError instanceof ApiError
-      ) {
-        setError(requestError.message)
-      } else {
-        setError(
-          'Unable to update the request status.',
+        requestError instanceof ApiError &&
+        (
+          requestError.status === 403 ||
+          requestError.status === 404 ||
+          requestError.status === 409
         )
+      ) {
+        await loadRequests(false)
       }
     } finally {
       setActionRequestId(null)
@@ -337,14 +382,21 @@ export function RequestsPage() {
         await loadRequests(false)
       }
     } catch (requestError) {
+      showRequestError(
+        requestError,
+        'Unable to cancel the request.',
+      )
+
       if (
-        requestError instanceof ApiError
-      ) {
-        setError(requestError.message)
-      } else {
-        setError(
-          'Unable to cancel the request.',
+        requestError instanceof ApiError &&
+        (
+          requestError.status === 403 ||
+          requestError.status === 404 ||
+          requestError.status === 409
         )
+      ) {
+        setPendingCancellation(null)
+        await loadRequests(false)
       }
     } finally {
       setActionRequestId(null)
@@ -491,21 +543,41 @@ export function RequestsPage() {
       {error && (
         <div
           role="alert"
-          className="mt-6 flex flex-col gap-4 rounded-2xl border border-red-200 bg-red-50 p-5 sm:flex-row sm:items-center sm:justify-between"
+          className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-5"
         >
-          <p className="text-sm font-medium text-red-700">
-            {error}
-          </p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-sm font-bold text-red-800">
+                {errorTitle ?? 'Request failed'}
+              </p>
 
-          <button
-            type="button"
-            onClick={() =>
-              void loadRequests(true)
-            }
-            className="w-fit rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white"
-          >
-            Try again
-          </button>
+              <p className="mt-1 text-sm leading-6 text-red-700">
+                {error}
+              </p>
+            </div>
+
+            <div className="flex shrink-0 flex-wrap gap-2">
+              {shouldReloadAfterError && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    void loadRequests(true)
+                  }
+                  className="rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-700"
+                >
+                  Reload requests
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={clearRequestError}
+                className="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-bold text-red-700 transition hover:bg-red-100"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

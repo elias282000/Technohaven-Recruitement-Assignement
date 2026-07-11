@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useRef,
   type ReactNode,
 } from 'react'
 
@@ -20,11 +21,24 @@ export function Modal({
   size = 'medium',
   onClose,
 }: ModalProps) {
+  const modalRef =
+    useRef<HTMLElement | null>(null)
+
   useEffect(() => {
     const previousOverflow =
       document.body.style.overflow
 
+    const previouslyFocusedElement =
+      document.activeElement instanceof
+      HTMLElement
+        ? document.activeElement
+        : null
+
     document.body.style.overflow = 'hidden'
+
+    window.requestAnimationFrame(() => {
+      modalRef.current?.focus()
+    })
 
     function handleKeyDown(
       event: KeyboardEvent,
@@ -47,15 +61,15 @@ export function Modal({
         'keydown',
         handleKeyDown,
       )
+
+      previouslyFocusedElement?.focus()
     }
   }, [onClose])
 
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-title"
+      role="presentation"
     >
       <button
         type="button"
@@ -65,8 +79,18 @@ export function Modal({
       />
 
       <section
+        ref={modalRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        aria-describedby={
+          description
+            ? 'modal-description'
+            : undefined
+        }
         className={[
-          'relative z-10 flex max-h-[90vh] w-full flex-col overflow-hidden rounded-3xl border border-white/60 bg-white shadow-2xl',
+          'relative z-10 flex max-h-[90vh] w-full flex-col overflow-hidden rounded-3xl border border-white/60 bg-white shadow-2xl outline-none',
           size === 'large'
             ? 'max-w-4xl'
             : 'max-w-xl',
@@ -82,7 +106,10 @@ export function Modal({
             </h2>
 
             {description && (
-              <p className="mt-1 text-sm leading-6 text-slate-500">
+              <p
+                id="modal-description"
+                className="mt-1 text-sm leading-6 text-slate-500"
+              >
                 {description}
               </p>
             )}

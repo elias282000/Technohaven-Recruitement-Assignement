@@ -11,6 +11,10 @@ import {
   RealtimeStatusBadge,
 } from '../realtime/RealtimeStatusBadge'
 
+import {
+  RealtimeRecoveryBanner,
+} from '../realtime/RealtimeRecoveryBanner'
+
 import { useAuth } from '../../hooks/useAuth'
 import { BrandMark } from './BrandMark'
 
@@ -294,6 +298,8 @@ export function AppLayout() {
             </div>
           </div>
         </header>
+
+        <RealtimeRecoveryBanner />
 
         <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <Outlet />
