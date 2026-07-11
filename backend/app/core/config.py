@@ -8,19 +8,26 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
-    app_name: str = "Real-Time Service Request Management System"
+    app_name: str = (
+        "Real-Time Service Request Management System"
+    )
     app_environment: str = "development"
     app_host: str = "127.0.0.1"
-    app_port: int = Field(default=8000, ge=1, le=65535)
-    frontend_origin: str = "http://localhost:5173"
-
-    database_url: str = Field(
-        min_length=1,
-        description="Async SQLAlchemy PostgreSQL connection URL.",
+    app_port: int = Field(
+        default=8000,
+        ge=1,
+        le=65535,
     )
 
+    frontend_origins: str = (
+        "http://localhost:5173,"
+        "http://localhost:4173"
+    )
+
+    database_url: str = Field(min_length=1)
+
     jwt_secret_key: str = Field(min_length=32)
-    jwt_algorithm: Literal["HS256"] = "HS256"
+    jwt_algorithm: str = "HS256"
 
     access_token_expire_minutes: int = Field(
         default=1440,
@@ -36,6 +43,14 @@ class Settings(BaseSettings):
         default=10,
         ge=0,
     )
+
+    @property
+    def allowed_frontend_origins(self) -> list[str]:
+        return [
+            origin.strip()
+            for origin in self.frontend_origins.split(",")
+            if origin.strip()
+        ]
 
     model_config = SettingsConfigDict(
         env_file=".env",
