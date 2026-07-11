@@ -2,6 +2,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 
@@ -11,6 +12,7 @@ import { RequestDetailsModal } from '../components/requests/RequestDetailsModal'
 import { RequestFilters } from '../components/requests/RequestFilters'
 import { RequestList } from '../components/requests/RequestList'
 import { useAuth } from '../hooks/useAuth'
+import { useRealtime } from '../hooks/useRealtime'
 import { ApiError } from '../lib/api'
 
 import {
@@ -45,6 +47,11 @@ function updateRequestInList(
 
 export function RequestsPage() {
   const { user } = useAuth()
+
+  const { subscribe } = useRealtime()
+
+  const requestLoadSequenceRef =
+    useRef(0)
 
   const [requests, setRequests] =
     useState<ServiceRequest[]>([])
@@ -93,35 +100,97 @@ export function RequestsPage() {
   ] = useState(0)
 
   const loadRequests = useCallback(
-    async (): Promise<void> => {
-      setIsLoading(true)
-      setError(null)
+    async (
+        showLoadingState = true,
+    ): Promise<void> => {
+        const requestSequence =
+        requestLoadSequenceRef.current + 1
 
-      try {
+        requestLoadSequenceRef.current =
+        requestSequence
+
+        if (showLoadingState) {
+        setIsLoading(true)
+        }
+
+        try {
         const loadedRequests =
-          await getRequests(appliedFilters)
+            await getRequests(appliedFilters)
+
+        if (
+            requestSequence !==
+            requestLoadSequenceRef.current
+        ) {
+            return
+        }
 
         setRequests(loadedRequests)
-      } catch (requestError) {
+        setError(null)
+        } catch (requestError) {
         if (
-          requestError instanceof ApiError
+            requestSequence !==
+            requestLoadSequenceRef.current
         ) {
-          setError(requestError.message)
-        } else {
-          setError(
-            'Unable to load service requests.',
-          )
+            return
         }
-      } finally {
-        setIsLoading(false)
-      }
+
+        if (
+            requestError instanceof ApiError
+        ) {
+            setError(requestError.message)
+        } else {
+            setError(
+            'Unable to load service requests.',
+            )
+        }
+        } finally {
+        if (
+            showLoadingState &&
+            requestSequence ===
+            requestLoadSequenceRef.current
+        ) {
+            setIsLoading(false)
+        }
+        }
     },
     [appliedFilters],
   )
 
   useEffect(() => {
-    void loadRequests()
+    void loadRequests(true)
   }, [loadRequests])
+
+  useEffect(() => {
+    const unsubscribe = subscribe(
+        (realtimeEvent) => {
+        if (
+            realtimeEvent.type !==
+            'request_created' &&
+            realtimeEvent.type !==
+            'request_updated'
+        ) {
+            return
+        }
+
+        /*
+        * Reload from the REST API so active search,
+        * status, and priority filters remain exact.
+        */
+        void loadRequests(false)
+
+        /*
+        * If the details modal is open, this causes
+        * it to reload the request and history.
+        */
+        setDetailsRefreshKey(
+            (currentKey) =>
+            currentKey + 1,
+        )
+        },
+    )
+
+    return unsubscribe
+  }, [loadRequests, subscribe])
 
   const summary = useMemo(
     () => ({
@@ -169,13 +238,17 @@ export function RequestsPage() {
       appliedFilters.priority !== ''
 
     if (filtersAreActive) {
-      void loadRequests()
+      void loadRequests(false)
       return
     }
 
     setRequests((currentRequests) => [
       createdRequest,
-      ...currentRequests,
+      ...currentRequests.filter(
+        (serviceRequest) =>
+          serviceRequest.id !==
+          createdRequest.id,
+    ),
     ])
   }
 
@@ -210,7 +283,7 @@ export function RequestsPage() {
         updatedRequest.status !==
           appliedFilters.status
       ) {
-        await loadRequests()
+        await loadRequests(false)
       }
     } catch (requestError) {
       if (
@@ -261,7 +334,7 @@ export function RequestsPage() {
         appliedFilters.status !==
           'cancelled'
       ) {
-        await loadRequests()
+        await loadRequests(false)
       }
     } catch (requestError) {
       if (
@@ -300,11 +373,16 @@ export function RequestsPage() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="hidden items-center gap-2 text-xs font-semibold text-slate-500 lg:flex">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            Updates automatically
+          </div>
+
           <button
             type="button"
             onClick={() =>
-              void loadRequests()
+              void loadRequests(true)
             }
             disabled={isLoading}
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
@@ -329,7 +407,7 @@ export function RequestsPage() {
               />
             </svg>
 
-            Refresh
+            Refresh now
           </button>
 
           <button
@@ -422,7 +500,7 @@ export function RequestsPage() {
           <button
             type="button"
             onClick={() =>
-              void loadRequests()
+              void loadRequests(true)
             }
             className="w-fit rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white"
           >

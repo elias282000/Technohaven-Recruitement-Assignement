@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router'
 
 import App from './App'
 import { AuthProvider } from './contexts/AuthContext'
+import { RealtimeProvider } from './contexts/RealtimeContext'
 import './index.css'
 
 const rootElement =
@@ -19,7 +20,9 @@ createRoot(rootElement).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <RealtimeProvider>
+          <App />
+        </RealtimeProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,

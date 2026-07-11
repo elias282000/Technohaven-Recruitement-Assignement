@@ -7,6 +7,10 @@ import {
   Outlet,
 } from 'react-router'
 
+import {
+  RealtimeStatusBadge,
+} from '../realtime/RealtimeStatusBadge'
+
 import { useAuth } from '../../hooks/useAuth'
 import { BrandMark } from './BrandMark'
 
@@ -219,6 +223,9 @@ export function AppLayout() {
           <p className="mt-1 text-xs font-medium text-slate-500">
             {roleLabel(user.role)}
           </p>
+          <div className="mt-3">
+            <RealtimeStatusBadge />
+          </div>
 
           <button
             type="button"
@@ -268,7 +275,9 @@ export function AppLayout() {
               </div>
             </div>
 
-            <div className="hidden items-center gap-3 sm:flex">
+            <div className="hidden items-center gap-4 sm:flex">
+              <RealtimeStatusBadge />
+
               <div className="text-right">
                 <p className="text-sm font-semibold text-slate-900">
                   {user.email}
