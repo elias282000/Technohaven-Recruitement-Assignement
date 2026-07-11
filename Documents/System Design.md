@@ -12,7 +12,7 @@
 | Concurrency and recovery | **`asyncio.create_task` + FastAPI lifespan/startup hook** | Enables independent non-blocking tasks and rescheduling of persisted active requests after restart. |
 | Frontend | **React with Vite** | Component-based interface and minimal tooling overhead. |
 | Styling | **Tailwind CSS** | Supports the required responsive polished dashboard design. |
-| Frontend state | **Hooks, reducer, and Context** | Sufficient for authentication, requests, summaries, and WebSocket state without Redux. |
+| Frontend state | **React hooks and Context** | Sufficient for authentication, request state, live summaries, and WebSocket state without Redux or another external state library. |
 
 ## 2. High-Level Architecture
 
@@ -20,7 +20,17 @@
 graph TB
     subgraph Client["Client Browser"]
         UI["React UI"]
+        AuthContext["Authentication Context"]
+        RealtimeContext["Realtime Context"]
+        APIClient["REST API Client"]
         WSClient["WebSocket Client"]
+        ErrorBoundary["Application Error Boundary"]
+
+        UI --> AuthContext
+        UI --> RealtimeContext
+        UI --> APIClient
+        RealtimeContext --> WSClient
+        ErrorBoundary --> UI
     end
 
     subgraph Backend["FastAPI Backend"]
@@ -37,7 +47,7 @@ graph TB
         DB[("PostgreSQL")]
     end
 
-    UI -->|HTTPS REST| REST
+    APIClient -->|HTTPS REST + Bearer JWT| REST
     WSClient <-->|WebSocket + JWT| WSRoute
     REST --> Auth
     WSRoute --> Auth
@@ -50,21 +60,43 @@ graph TB
     Recovery --> DB
     Recovery --> TaskManager
     WSManager --> WSClient
+    RealtimeContext -->|Event triggers REST reconciliation| APIClient
 ```
 
-PostgreSQL is authoritative. The task manager contains only local runtime task references and can be rebuilt from the database after restart.
+PostgreSQL is authoritative. WebSocket messages notify clients that state changed; the frontend then reloads authoritative REST data using its active filters. The task manager contains only local runtime task references and can be rebuilt from the database after restart.
 
 ## 3. Component Design
 
 ```mermaid
 graph TB
-    subgraph Routers["Routers"]
+    subgraph Frontend["React Frontend"]
+        Pages["Pages"]
+        UIComponents["UI Components"]
+        AuthContext["AuthContext"]
+        RealtimeContext["RealtimeContext"]
+        APIClient["API Client"]
+        AuthServiceFE["authService.ts"]
+        RequestServiceFE["requestService.ts"]
+        ErrorBoundary["AppErrorBoundary"]
+
+        Pages --> UIComponents
+        Pages --> AuthContext
+        Pages --> RealtimeContext
+        Pages --> RequestServiceFE
+        AuthContext --> AuthServiceFE
+        AuthServiceFE --> APIClient
+        RequestServiceFE --> APIClient
+        RealtimeContext --> APIClient
+        ErrorBoundary --> Pages
+    end
+
+    subgraph Routers["FastAPI Routers"]
         AuthRouter["auth.py"]
         RequestRouter["requests.py"]
         WebSocketRouter["websocket.py"]
     end
 
-    subgraph Services["Services"]
+    subgraph Services["Backend Services"]
         AuthService["auth_service.py"]
         RequestService["request_service.py"]
     end
@@ -73,15 +105,21 @@ graph TB
         Security["security.py"]
         Config["config.py"]
         WSManager["websocket_manager.py"]
+        WSEvents["websocket_events.py"]
         TaskManager["task_manager.py"]
+        Processor["background_processing.py"]
         Recovery["startup_recovery.py"]
     end
 
     subgraph Data["Data Layer"]
         Models["models.py"]
-        Schemas["schemas.py"]
+        Schemas["Pydantic Schemas"]
         Database["database.py"]
     end
+
+    APIClient --> AuthRouter
+    APIClient --> RequestRouter
+    RealtimeContext --> WebSocketRouter
 
     AuthRouter --> AuthService
     RequestRouter --> RequestService
@@ -92,15 +130,20 @@ graph TB
     AuthService --> Models
     RequestService --> Models
     RequestService --> TaskManager
+    RequestService --> WSEvents
     RequestService --> WSManager
 
-    TaskManager --> RequestService
+    TaskManager --> Processor
+    Processor --> RequestService
     Recovery --> Models
     Recovery --> TaskManager
+
     Models --> Database
+    Schemas --> AuthRouter
+    Schemas --> RequestRouter
     Config --> Database
     Config --> Security
-    Config --> TaskManager
+    Config --> Processor
 ```
 
 ### 3.1 Responsibilities
@@ -136,6 +179,13 @@ graph TB
 - Define SQLAlchemy models and relationships.
 - Define Pydantic input/output schemas.
 - Provide async sessions and engine lifecycle.
+
+#### Frontend
+
+- Present protected login, dashboard, request list, details, history, filters, and permission-aware controls.
+- Manage authentication and WebSocket state through React Context.
+- Treat real-time events as change notifications and reconcile through REST.
+- Provide responsive loading, empty, conflict, permission, offline, and runtime-recovery states.
 
 ## 4. Database Design
 
@@ -289,7 +339,11 @@ All endpoints except `/auth/login` require `Authorization: Bearer <token>`.
   "status": "pending",
   "created_by": 3,
   "created_at": "2026-07-10T09:15:00Z",
-  "updated_at": "2026-07-10T09:15:00Z"
+  "updated_at": "2026-07-10T09:15:00Z",
+  "creator": {
+    "id": 3,
+    "email": "operator@example.com"
+  }
 }
 ```
 
@@ -334,37 +388,69 @@ Possible outcomes:
 
 ## 8. WebSocket Design
 
-### 8.1 Connection flow
+### 8.1 Connection and recovery flow
 
 ```mermaid
 sequenceDiagram
     participant C as React Client
+    participant RTC as Realtime Context
     participant WSR as WebSocket Route
     participant Sec as Security
+    participant DB as PostgreSQL
     participant WSM as Connection Manager
+    participant API as REST API
 
-    C->>WSR: Connect /ws?token=JWT
-    WSR->>Sec: Validate JWT
-    alt Invalid or expired token
-        WSR-->>C: Close with policy/auth error
-    else Valid token
-        WSR->>WSM: Register connection
-        WSR-->>C: connection_established
-        Note over C,WSM: Client remains registered until disconnect
+    C->>RTC: Authenticated session available
+    RTC->>WSR: Connect /ws?token=JWT
+    WSR->>Sec: Decode and validate JWT
+    Sec-->>WSR: User ID
+    WSR->>DB: Load current user
+
+    alt Missing, invalid, expired token or unknown user
+        WSR-->>RTC: Close code 1008
+        RTC->>C: Clear session and redirect to login
+    else Valid user
+        WSR->>WSM: Accept and register connection
+        WSR-->>RTC: connection_established
+        RTC->>API: Reload authoritative REST state
+        API-->>RTC: Current requests and summaries
+
+        loop Connected
+            WSM-->>RTC: request_created or request_updated
+            RTC->>API: Reload relevant REST data
+            API-->>RTC: Authoritative current state
+        end
+
+        alt Temporary disconnection
+            RTC->>RTC: Schedule reconnect with bounded backoff
+            RTC->>WSR: Reconnect with JWT
+        end
     end
 ```
 
 ### 8.2 Event types
 
+#### `connection_established`
+
+Sent immediately after a JWT-authenticated WebSocket connection is accepted. It contains the authenticated user ID and role. The frontend uses it to confirm connectivity and reconcile REST state after initial connection or reconnection.
+
+```json
+{
+  "type": "connection_established",
+  "data": {
+    "user_id": 1,
+    "role": "operator"
+  }
+}
+```
+
 #### `request_created`
 
-Sent after a request is committed.
+Sent after a new request is committed. The payload contains the newly created request fields needed for notification and immediate presentation.
 
 #### `request_updated`
 
 Sent after a successful status transition is committed.
-
-Suggested event envelope:
 
 ```json
 {
@@ -377,7 +463,15 @@ Suggested event envelope:
 }
 ```
 
-The frontend updates the request collection and recalculates status-summary counts from the event data. On reconnection, it should refresh the REST list to recover any events missed while disconnected.
+The frontend treats WebSocket messages as change notifications. After `request_created` or `request_updated`, it reloads the authoritative request collection through REST using the current search and filters, then recalculates summaries. After `connection_established`, it also reloads state to recover events missed while disconnected.
+
+### 8.3 Frontend reconnection policy
+
+- Non-authentication disconnects trigger automatic reconnection.
+- Reconnection uses exponential backoff beginning at approximately one second and capped at approximately fifteen seconds.
+- Close code `1008` is treated as an authentication failure and logs the user out rather than reconnecting.
+- Logout and component cleanup close the socket and cancel pending reconnect timers.
+- Connection state is shown as connecting, live, reconnecting, or offline.
 
 ## 9. Concurrent Processing Design
 
@@ -411,17 +505,21 @@ sequenceDiagram
     participant Loop as Async Event Loop
     participant A as Task Request A
     participant B as Task Request B
-    participant S as Request Service
+    participant DB as PostgreSQL
+    participant S as Shared Transition Service
 
-    par Concurrent execution
-        Loop->>A: run process_request(A)
-        A->>S: attempt automatic transition
-    and
-        Loop->>B: run process_request(B)
-        B->>S: attempt automatic transition
+    par Request A processing
+        Loop->>A: process_request(A)
+        A->>DB: Reload current status
+        A->>S: Attempt valid transition
+    and Request B processing
+        Loop->>B: process_request(B)
+        B->>DB: Reload current status
+        B->>S: Attempt valid transition
     end
 
-    Note over Loop: Failure in A must not stop B or the API
+    Note over A,B: Each task uses an independent async database session
+    Note over Loop: Failure in one task does not stop another task or the REST API
 ```
 
 ### 9.3 Task registry
@@ -484,6 +582,7 @@ sequenceDiagram
 - The persisted status determines the recovery stage.
 - The task manager's duplicate check is used for both new and recovered requests.
 - Every task still reloads current state before transitions, so recovery remains safe if a user changes a request shortly after startup.
+- During shutdown, the application closes WebSocket clients, cancels and awaits local background tasks, and then disposes the database engine.
 
 ### 11.3 Assignment-level limitation
 
@@ -518,56 +617,75 @@ sequenceDiagram
     AS->>DB: Find user by email
     DB-->>AS: User record
     AS->>Sec: Verify bcrypt password
+
     alt Invalid credentials
-        AS-->>AR: Authentication error
         AR-->>C: 401 Unauthorized
     else Valid credentials
         AS->>Sec: Issue JWT(user_id, role, expiry)
         Sec-->>AS: Access token
-        AS-->>AR: Token response
-        AR-->>C: 200 OK
+        AR-->>C: 200 Token response
+        C->>C: Store access token
+        C->>AR: GET /auth/me with Bearer token
+        AR->>Sec: Validate JWT
+        AR->>DB: Load current user
+        DB-->>AR: Current user
+        AR-->>C: Authenticated user profile
     end
 ```
 
-The JWT identity is used to derive `created_by` and enforce ownership. The client must never submit a trusted creator ID.
+The JWT identity is used to derive `created_by` and enforce ownership. The client must never submit a trusted creator ID. During normal use, an authenticated REST `401` or WebSocket close code `1008` clears the frontend session and requires login again.
 
 ## 14. End-to-End Lifecycle
 
 ```mermaid
 sequenceDiagram
     participant Op as Operator Client
-    participant API as FastAPI
+    participant API as FastAPI REST API
     participant S as Request Service
     participant DB as PostgreSQL
     participant TM as Task Manager
     participant WS as WebSocket Manager
+    participant RTC as Frontend Realtime Context
     participant Sup as Supervisor Client
 
-    Op->>API: POST request with requester_name
-    API->>S: create_request
-    S->>DB: Insert pending request
-    S->>TM: Schedule background task
+    Op->>API: POST /requests
+    API->>S: create_request(user, payload)
+    S->>DB: INSERT request status=pending
+    DB-->>S: Commit succeeds
+    S->>TM: schedule(request_id)
     S->>WS: Broadcast request_created
-    WS-->>Sup: New request appears
+    S-->>API: Persisted request
+    API-->>Op: 201 Created
+
+    WS-->>RTC: request_created
+    RTC->>API: GET /requests using current filters
+    API-->>RTC: Authoritative request list
+    RTC-->>Sup: UI shows new request
 
     TM->>S: Attempt pending to in_progress
-    S->>DB: Reload, validate, update + history
+    S->>DB: Reload and lock request
+    S->>DB: Update request plus insert history
+    DB-->>S: Commit succeeds
     S->>WS: Broadcast request_updated
-    WS-->>Op: Status becomes in_progress
-    WS-->>Sup: Status becomes in_progress
+
+    WS-->>RTC: request_updated
+    RTC->>API: Reload request list, details, and history
+    API-->>RTC: Authoritative current state
+    RTC-->>Op: UI shows in_progress
+    RTC-->>Sup: UI shows in_progress
 
     alt Authorized cancellation before completion
-        Op->>API: DELETE own request
+        Op->>API: DELETE /requests/{id}
         API->>S: cancel_request
-        S->>DB: Reload, authorize, set cancelled + history
+        S->>DB: Reload, authorize, update plus history
+        DB-->>S: Commit succeeds
         S->>WS: Broadcast request_updated
-        Note over TM: Later reload sees terminal status and stops
-    else Normal automatic completion
+        Note over TM: Worker reloads cancelled state and stops
+    else Normal completion
         TM->>S: Attempt in_progress to completed
-        S->>DB: Reload, validate, update + history
+        S->>DB: Reload, validate, update plus history
+        DB-->>S: Commit succeeds
         S->>WS: Broadcast request_updated
-        WS-->>Op: Status becomes completed
-        WS-->>Sup: Status becomes completed
     end
 ```
 
@@ -582,11 +700,13 @@ backend/
 │   │   ├── requests.py
 │   │   └── websocket.py
 │   ├── core/
+│   │   ├── background_processing.py
 │   │   ├── config.py
 │   │   ├── security.py
-│   │   ├── websocket_manager.py
+│   │   ├── startup_recovery.py
 │   │   ├── task_manager.py
-│   │   └── startup_recovery.py
+│   │   ├── websocket_events.py
+│   │   └── websocket_manager.py
 │   ├── db/
 │   │   ├── database.py
 │   │   └── models.py
@@ -603,6 +723,44 @@ backend/
 
 The exact filenames may vary slightly, but the architectural responsibilities must remain separated.
 
-## 16. Design Summary
+## 16. Recommended Frontend Structure
 
-The design uses PostgreSQL as the durable source of truth, a shared service-layer transition function for both manual and automatic changes, and an `asyncio` task manager for non-blocking processing. Ownership and role rules are explicit, `requester_name` is present throughout the data model and API, terminal states are protected, and active requests are safely rescheduled at startup. Status persistence and history are committed before WebSocket broadcast, keeping the database, audit trail, and live interface consistent.
+```text
+frontend/src/
+├── components/
+│   ├── auth/
+│   ├── errors/
+│   ├── layout/
+│   ├── realtime/
+│   ├── requests/
+│   └── ui/
+├── contexts/
+│   ├── AuthContext.tsx
+│   └── RealtimeContext.tsx
+├── hooks/
+├── lib/
+├── pages/
+├── services/
+└── types/
+```
+
+The frontend separates presentation components, pages, API services, reusable hooks, domain types, and shared authentication/realtime state.
+
+## 17. Configuration and Lifecycle
+
+- Database URL, JWT settings, token lifetime, processing delays, API host/port, and frontend CORS origins are environment-driven.
+- Frontend CORS origins are supplied as a comma-separated setting and parsed into an allowlist, supporting development and preview origins.
+- The frontend derives `ws://` or `wss://` from the configured API base URL instead of maintaining a separate WebSocket endpoint setting.
+- On shutdown, WebSocket clients are closed first, background tasks are cancelled and awaited second, and the database engine is disposed last.
+
+## 18. Frontend Recovery and Error Handling
+
+- A global React error boundary prevents unexplained white screens after render failures.
+- The API client raises structured errors containing HTTP status and backend detail.
+- Authenticated REST `401` responses notify the authentication Context to clear the session.
+- Request screens distinguish network failure, permission denial, missing resources, state conflicts, and validation errors.
+- Reconnecting and offline states are visible to the user, while existing persisted data remains available.
+
+## 19. Design Summary
+
+The design uses PostgreSQL as the durable source of truth, a shared service-layer transition function for both manual and automatic changes, and an `asyncio` task manager for non-blocking processing. Ownership and role rules are explicit, `requester_name` is present throughout the data model and API, terminal states are protected, and active requests are safely rescheduled at startup. Status persistence and history are committed before WebSocket broadcast. The frontend treats those broadcasts as change notifications and reconciles through REST, keeping the database, audit trail, filtered views, dashboard summaries, and live interface consistent.

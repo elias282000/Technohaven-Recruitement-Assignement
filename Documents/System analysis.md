@@ -62,6 +62,8 @@ Both roles authenticate through a login screen. All request-related REST endpoin
 - Filtering by status and priority.
 - Status history and timestamps.
 - Live status counts and WebSocket broadcasts.
+- Automatic WebSocket reconnection and REST reconciliation after reconnect.
+- Loading, empty, permission-denied, stale-state, offline, and runtime-recovery states.
 - Responsive web interface.
 - Persistent relational storage in PostgreSQL.
 
@@ -126,7 +128,7 @@ The assignment did not provide direct stakeholder access, so the following quest
 16. How quickly should live updates appear?
    - Normally within approximately one second.
 17. Should disconnected WebSockets recover?
-   - Yes. The frontend should reconnect automatically.
+   - Yes. The frontend reconnects automatically with bounded exponential backoff and reloads authoritative REST state after `connection_established`.
 18. Must data survive server restarts?
    - Yes. PostgreSQL persists data, and active processing is rescheduled from persisted statuses.
 19. Is the UI responsive?
@@ -194,6 +196,19 @@ The following are invalid:
 - `pending` resumes toward `in_progress`; `in_progress` resumes toward `completed`.
 - The database state is never overwritten merely because the server restarted.
 
+### 3.8 Real-time reconciliation
+
+- WebSocket events are treated as change notifications rather than the only source of request data.
+- After `request_created` or `request_updated`, the frontend reloads the relevant REST data using the current search and filters.
+- After a successful connection or reconnection, `connection_established` triggers a REST refresh so changes missed while disconnected are recovered.
+- PostgreSQL-backed REST responses remain authoritative for list, details, history, and dashboard counts.
+
+### 3.9 Session and frontend recovery
+
+- If an authenticated REST request returns `401`, the frontend clears the stored JWT and current-user state and returns to login.
+- If the WebSocket closes with code `1008`, the frontend treats it as an authentication failure and logs the user out.
+- Unexpected React rendering failures are handled by an application-level error boundary that provides reload and session-reset options.
+
 ## 4. Functional Requirements
 
 | ID | Requirement | Description |
@@ -207,32 +222,32 @@ The following are invalid:
 | FR-7 | Search requests | Users can search requests by keyword across title, description, and requester name. |
 | FR-8 | Filter requests | Users can filter by status and priority, including combined filters. |
 | FR-9 | Real-time event broadcast | Request creation and every successful status change are pushed to authenticated connected clients through WebSockets without polling. |
-| FR-10 | Live request summary | The dashboard displays live counts for each status and updates them when WebSocket events arrive. |
+| FR-10 | Live request summary | The dashboard displays live counts for total, pending, in-progress, completed, and cancelled requests. WebSocket events trigger REST reconciliation, after which the frontend recalculates counts from the authoritative request collection. |
 | FR-11 | Concurrent request processing | Multiple requests can progress independently at the same time without blocking standard API calls. |
 | FR-12 | Validation feedback | Backend Pydantic validation and matching frontend validation provide clear errors for invalid title, description, requester name, priority, filters, and status changes. |
-| FR-13 | Connection status indicator | The frontend shows connected, reconnecting, or disconnected WebSocket state and automatically attempts reconnection. |
+| FR-13 | Connection status indicator | The frontend shows connecting, connected, reconnecting, or disconnected WebSocket state, automatically attempts reconnection with bounded backoff, and reloads state after reconnection. |
 | FR-14 | History and timestamps | Every request stores creation and last-update timestamps. Every successful status change stores old status, new status, and change time. |
 | FR-15 | User authentication | Operators and Supervisors log in with email and password and receive an expiring JWT. |
 | FR-16 | Role and ownership access control | Backend authorization distinguishes Supervisor-wide control from Operator ownership-limited control for updates and cancellation. |
-| FR-17 | Protected REST and WebSocket access | All request APIs and WebSocket connections require a valid JWT; invalid or expired tokens are rejected. |
+| FR-17 | Protected REST and WebSocket access | All request APIs and WebSocket connections require a valid JWT. Invalid, expired, missing-token, or unknown-user sessions are rejected; runtime authentication failures clear the frontend session. |
 
 ## 5. Non-Functional Requirements
 
 | ID | Requirement | Description |
 |---|---|---|
-| NFR-1 | Performance | Standard CRUD responses should normally complete within approximately 200 ms under normal assignment/demo load, excluding simulated background processing. |
+| NFR-1 | Performance | Standard CRUD responses should remain responsive under normal assignment/demo load and should generally target approximately 200 ms, excluding network variability and simulated background processing. |
 | NFR-2 | Responsive UI | The interface must adapt cleanly to desktop and mobile screen sizes. |
 | NFR-3 | Real-time latency | Successful request events should normally reach connected clients within approximately one second. |
 | NFR-4 | Scalability | The stateless REST layer, async processing model, and WebSocket manager should support increased assignment-scale concurrency without redesigning core modules. |
 | NFR-5 | Reliability and recovery | A failure in one request task must not crash the API or other tasks. Persisted `pending` and `in_progress` requests must be rescheduled after backend restart. |
-| NFR-6 | Availability | The frontend must recover gracefully from dropped WebSocket connections using automatic reconnection and state refresh where necessary. |
+| NFR-6 | Availability | The frontend must recover gracefully from dropped WebSocket connections using automatic reconnection, bounded backoff, visible connection state, and REST reconciliation after reconnection. |
 | NFR-7 | Security | Inputs must be validated and safely handled to reduce SQL injection and XSS risks. Authorization must be enforced server-side. |
 | NFR-8 | Maintainability | Code must follow the documented router, service, model/schema, and core separation. |
 | NFR-9 | Data integrity | PostgreSQL must enforce non-null fields, unique email, foreign keys, and valid role, priority, and status values. Status and history writes must remain consistent. |
-| NFR-10 | Usability | A request should be creatable using only four required business fields: title, description, requester name, and priority. Current status and available actions must be clear at a glance. |
+| NFR-10 | Usability | A request should be creatable using only four required business fields: title, description, requester name, and priority. Current status, available actions, loading, empty, conflict, permission, and recovery states must be clear at a glance. |
 | NFR-11 | Configurability | Database URL, JWT secret, token duration, processing delays, ports, and related settings must be configured through environment variables. |
 | NFR-12 | Authentication security | Passwords must be stored only as bcrypt hashes and never returned through APIs. |
-| NFR-13 | Session expiry | JWTs must expire after a configured fixed duration, such as 24 hours. |
+| NFR-13 | Session expiry | JWTs must expire after a configured fixed duration, such as 24 hours. Expired REST or WebSocket sessions must clear client authentication state and require login again. |
 
 ## 6. Acceptance Summary
 
