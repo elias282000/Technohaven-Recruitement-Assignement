@@ -61,7 +61,7 @@ POST http://127.0.0.1:8000/auth/login: {
     "content-length": "247",
     "content-type": "application/json"
   },
-  "Response Body": "{\"access_token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo\",\"token_type\":\"bearer\",\"expires_in\":86400}"
+  "Response Body": "{\"access_token\":\"[REDACTED_JWT]\",\"token_type\":\"bearer\",\"expires_in\":86400}"
 }
 GET http://127.0.0.1:8000/auth/me: {
   "Network": {
@@ -80,7 +80,7 @@ GET http://127.0.0.1:8000/auth/me: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "ee8e3abc-3b41-4f02-b9e1-8c92de13a0d7",
     "host": "127.0.0.1:8000",
@@ -127,7 +127,7 @@ POST http://127.0.0.1:8000/auth/login: {
     "content-length": "249",
     "content-type": "application/json"
   },
-  "Response Body": "{\"access_token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZSI6InN1cGVydmlzb3IiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzgzNzg2OTY4LCJleHAiOjE3ODM4NzMzNjh9.OS2aZpcO9FJFbiIPkOFCDAmtK6a2lc7emE4eVw8oy5E\",\"token_type\":\"bearer\",\"expires_in\":86400}"
+  "Response Body": "{\"access_token\":\"[REDACTED_JWT]\",\"token_type\":\"bearer\",\"expires_in\":86400}"
 }
 GET http://127.0.0.1:8000/auth/me: {
   "Network": {
@@ -146,7 +146,7 @@ GET http://127.0.0.1:8000/auth/me: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZSI6InN1cGVydmlzb3IiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzgzNzg2OTY4LCJleHAiOjE3ODM4NzMzNjh9.OS2aZpcO9FJFbiIPkOFCDAmtK6a2lc7emE4eVw8oy5E",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "f7ba3aea-5889-480e-b745-c446c534c229",
     "host": "127.0.0.1:8000",
@@ -279,7 +279,7 @@ POST http://127.0.0.1:8000/requests: {
   "Request Headers": {
     "accept": "application/json",
     "content-type": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "ea520346-d924-4acd-884a-e2ca0d5ad207",
     "host": "127.0.0.1:8000",
@@ -314,7 +314,7 @@ POST http://127.0.0.1:8000/requests: {
   "Request Headers": {
     "accept": "application/json",
     "content-type": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZSI6InN1cGVydmlzb3IiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzgzNzg2OTY4LCJleHAiOjE3ODM4NzMzNjh9.OS2aZpcO9FJFbiIPkOFCDAmtK6a2lc7emE4eVw8oy5E",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "2cd2fd5f-f564-43c4-bffe-43ce4f450bbe",
     "host": "127.0.0.1:8000",
@@ -348,7 +348,7 @@ GET http://127.0.0.1:8000/requests: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "ed36aec2-8746-44c8-93cb-30f678f73f1c",
     "host": "127.0.0.1:8000",
@@ -380,7 +380,7 @@ GET http://127.0.0.1:8000/requests/41: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "74f8458d-e37c-45b2-8378-dd6a8eeade27",
     "host": "127.0.0.1:8000",
@@ -412,7 +412,7 @@ GET http://127.0.0.1:8000/requests/41/history: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "aaf7f71e-7b96-43cc-b44f-02807cf6b2b3",
     "host": "127.0.0.1:8000",
@@ -445,7 +445,7 @@ POST http://127.0.0.1:8000/requests: {
   "Request Headers": {
     "accept": "application/json",
     "content-type": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "80870f94-77ea-468a-a9ad-d21225a9abbe",
     "host": "127.0.0.1:8000",
@@ -480,7 +480,7 @@ POST http://127.0.0.1:8000/requests: {
   "Request Headers": {
     "accept": "application/json",
     "content-type": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "364afc4f-d06a-4276-904d-adb2b4d3e958",
     "host": "127.0.0.1:8000",
@@ -515,7 +515,7 @@ POST http://127.0.0.1:8000/requests: {
   "Request Headers": {
     "accept": "application/json",
     "content-type": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "ebe66f27-31e3-40f2-9b3f-cfb9d87fce25",
     "host": "127.0.0.1:8000",
@@ -550,7 +550,7 @@ PATCH http://127.0.0.1:8000/requests/41/status: {
   "Request Headers": {
     "accept": "application/json",
     "content-type": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "bdf4d396-bf72-4d47-b4ef-786028d7faf1",
     "host": "127.0.0.1:8000",
@@ -584,7 +584,7 @@ GET http://127.0.0.1:8000/requests?q=Ayesha%20Rahman: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "352da14b-6edf-4721-b6c8-32260640ca46",
     "host": "127.0.0.1:8000",
@@ -616,7 +616,7 @@ GET http://127.0.0.1:8000/requests?status=pending: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "c4ccb716-dcf2-434a-b789-a99e9430349d",
     "host": "127.0.0.1:8000",
@@ -648,7 +648,7 @@ GET http://127.0.0.1:8000/requests?priority=high: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "0ece6ba7-3682-4dda-a9b9-a907eb4c0e9b",
     "host": "127.0.0.1:8000",
@@ -680,7 +680,7 @@ GET http://127.0.0.1:8000/requests?q=Ayesha&status=pending&priority=high: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "d6974b72-5b18-4a01-b4ec-ce1dabf8bc97",
     "host": "127.0.0.1:8000",
@@ -713,7 +713,7 @@ POST http://127.0.0.1:8000/requests: {
   "Request Headers": {
     "accept": "application/json",
     "content-type": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "d8d2a178-d001-421c-8991-7e807c9d2ffa",
     "host": "127.0.0.1:8000",
@@ -747,7 +747,7 @@ DELETE http://127.0.0.1:8000/requests/43: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "9cf2d9b7-8f18-4d93-a0dd-4a7e1e2c11c1",
     "host": "127.0.0.1:8000",
@@ -779,7 +779,7 @@ GET http://127.0.0.1:8000/requests/43: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "7de4aa2e-90f0-4f25-a45f-ccb500f8665a",
     "host": "127.0.0.1:8000",
@@ -812,7 +812,7 @@ PATCH http://127.0.0.1:8000/requests/43/status: {
   "Request Headers": {
     "accept": "application/json",
     "content-type": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZSI6InN1cGVydmlzb3IiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzgzNzg2OTY4LCJleHAiOjE3ODM4NzMzNjh9.OS2aZpcO9FJFbiIPkOFCDAmtK6a2lc7emE4eVw8oy5E",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "8aace418-1994-41e1-9ee6-c28779bd2ee1",
     "host": "127.0.0.1:8000",
@@ -846,7 +846,7 @@ DELETE http://127.0.0.1:8000/requests/42: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "a7665baa-77d4-4bc1-9c42-7bbfd606cc9d",
     "host": "127.0.0.1:8000",
@@ -878,7 +878,7 @@ GET http://127.0.0.1:8000/requests/43/history: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZSI6InN1cGVydmlzb3IiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzgzNzg2OTY4LCJleHAiOjE3ODM4NzMzNjh9.OS2aZpcO9FJFbiIPkOFCDAmtK6a2lc7emE4eVw8oy5E",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "a5de2485-65e6-4d8e-85d6-14c066ad335e",
     "host": "127.0.0.1:8000",
@@ -910,7 +910,7 @@ GET http://127.0.0.1:8000/requests/999999999: {
   },
   "Request Headers": {
     "accept": "application/json",
-    "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6Im9wZXJhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4Mzc4Njk2NywiZXhwIjoxNzgzODczMzY3fQ.SgtvJ3Tk3LlbDLT_0uQtrVLxuKd-uESbU8uAwfUGoHo",
+    "authorization": "Bearer [REDACTED_JWT]",
     "user-agent": "PostmanRuntime/7.54.0",
     "postman-token": "5fc2c5de-036b-4653-b844-e07ef17cab60",
     "host": "127.0.0.1:8000",

@@ -1,9 +1,28 @@
-.DS_Store
-.idea/
-.vscode/
-backend/.venv/
+# Environment
 backend/.env
+frontend/.env
+
+# Python
+backend/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node
 frontend/node_modules/
 frontend/dist/
-frontend/.env
-frontend/.env.local
+
+# Editors
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+*.log
+*.tmp
+submission/
