@@ -502,24 +502,23 @@ Scheduling is non-blocking. The API does not wait for automatic processing to fi
 
 ```mermaid
 sequenceDiagram
-    participant Loop as Async Event Loop
+    participant EL as Async Event Loop
     participant A as Task Request A
     participant B as Task Request B
     participant DB as PostgreSQL
     participant S as Shared Transition Service
 
-    par Request A processing
-        Loop->>A: process_request(A)
-        A->>DB: Reload current status
-        A->>S: Attempt valid transition
-    and Request B processing
-        Loop->>B: process_request(B)
-        B->>DB: Reload current status
-        B->>S: Attempt valid transition
-    end
+    EL->>A: create_task(process_request(A))
+    EL->>B: create_task(process_request(B))
+    Note over A,B: Tasks run independently and their operations may interleave
+
+    A->>DB: Reload current status for Request A
+    B->>DB: Reload current status for Request B
+    A->>S: Attempt valid transition for Request A
+    B->>S: Attempt valid transition for Request B
 
     Note over A,B: Each task uses an independent async database session
-    Note over Loop: Failure in one task does not stop another task or the REST API
+    Note over EL: Failure in one task does not stop another task or the REST API
 ```
 
 ### 9.3 Task registry
